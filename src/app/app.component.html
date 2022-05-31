@@ -1,24 +1,72 @@
-<h1>{{title}}</h1>
-<!-- <p>Name: {{student.name}}</p>
-<p>ID: {{student.id}}</p>
-<p>Description: {{student.description}}</p>
-<p>Healthy?: {{student.isHealthy}}</p> -->
-
-<li *ngFor="let x of student" [class.featured] ="x.featured">
-    <img [src]="x.image" alt="" height="100px" width="100px"> 
-    <p>Name: {{x.name | uppercase}}</p>
-    <p>ID: {{x.id}}</p>
-    <p>Description: {{x.description}}</p>
-    <p>Healthy?: {{x.isHealthy}}</p>
-    <p *ngIf="x.inStock > 0">In stock?: {{x.inStock}}</p>
-    <p *ngIf="x.inStock === 0">"out of stock"</p>
-    <p>Price: {{x.price | currency: 'USD'}}</p>
-    <p>{{x.qty}}</p>
-    <button (click)="increaseQTY(x)">+</button>
-    <button (click)="decreaseQTY(x)">-</button>
-</li>
-
-<p>{{totalInventory()}} items in stock</p>
-
+<div class='card'>
+    <div class='card-header' id="titleheader">
+      <p>{{title}}</p>
+    </div>
+    <div class='card-body'>
+      <div class='row'>
+          <div class="col-md-2">Filter by:</div>
+          <div class ='col-md-4'>
+              <input type="text" [(ngModel)]="nameFilter">
+          </div>
+      </div>
+      <div class='table-responsive'>
+        <table class='table' *ngIf='student.length'>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Description</th>
+              <th>Is Healthy?</th>
+              <th>Amount In Stock</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="isEmptyObject(filteredStudent)">
+            <tr *ngFor='let product of student' [class.featured] ="product.featured">
+                <td><img [src]="product.image" alt="" height="100px" width="100px"></td>
+                <td>{{product.id}}</td>
+                <td>{{product.name}}</td>
+                <td>{{product.price | currency : 'CAD' : 'symbol' : '1.2-2'}}</td>
+                <td>{{product.description}}</td>
+                <td>{{product.isHealthy}}</td>
+                <td>{{product.inStock}}</td>
+                <td class ='postive'> <button (click)="increaseQTY(product)">+</button> </td>
+                <td> <input type='number'  [(ngModel)]='product.qty' (keyup)="checkValid(product)" (keyup)="totalItemsAndPriceInCart()"/></td>
+                <td class ='negative'> <button (click)="decreaseQTY(product)">-</button> </td>
+                <td> <p>Your quantity is {{product.qty}}</p> </td>
+                <td class ='postive' *ngIf="product.qty > 0"> <p>Enjoy this {{product.name}} today!</p> </td>
+                <td class ='negative' *ngIf="product.qty == 0"> <p>Not intrested in {{product.name}}?</p> </td>
+                <td class ='postive' *ngIf="(qtyMinusStock(product)) > 0"> <p>We only have {{qtyMinusStock(product)}} more {{product.name}} left!</p> </td>
+                <td class ='negative' *ngIf="(qtyMinusStock(product)) == 0"> <p>Sorry, we're out of stock of {{product.name}}</p> </td>
+            </tr>
+          </tbody>
+          <tbody *ngIf="!isEmptyObject(filteredStudent)">
+            <tr *ngFor='let product of filteredStudent' [class.featured] ="product.featured">
+                <td><img [src]="product.image" alt="" height="100px" width="100px"></td>
+                <td>{{product.id}}</td>
+                <td>{{product.name}}</td>
+                <td>{{product.price | currency : 'CAD' : 'symbol' : '1.2-2'}}</td>
+                <td>{{product.description}}</td>
+                <td>{{product.isHealthy}}</td>
+                <td>{{product.inStock}}</td>
+                <td class ='postive'> <button (click)="increaseQTY(product)">+</button> </td>
+                <td> <input type='number'  [(ngModel)]='product.qty' (keyup)="checkValid(product)"/></td>
+                <td> <button (click)="decreaseQTY(product)">-</button> </td>
+                <td> <p>Your quantity is {{product.qty}}</p> </td>
+                <td class ='postive' *ngIf="product.qty > 0"> <p>Enjoy this {{product.name}} today!</p> </td>
+                <td class ='negative' *ngIf="product.qty == 0"> <p>Not intrested in {{product.name}}?</p> </td>
+                <td class ='postive' *ngIf="(qtyMinusStock(product)) > 0"> <p>We only have {{qtyMinusStock(product)}} more {{product.name}} left!</p> </td>
+                <td class ='negative' *ngIf="(qtyMinusStock(product)) == 0"> <p>Sorry, we're out of stock of {{product.name}}</p> </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer">
+        <p>Total items in cart: {{itemsInCart}}</p>
+        <p>Total price: {{priceOfCart | currency: 'CAD' : 'symbol' : '1.2-2'}}</p>
+    </div>
+  </div>
 
 
